@@ -55,6 +55,113 @@ tqdm
 <h3>GraphSAGE Embeddings</h3>
 <img src="figures/GraphSAGE_embeddings.png" alt="GraphSAGE Embeddings" width="600">
 
+<h2>Results</h2>
+
+<h3>1) Baseline Methods</h3>
+<table border="1" cellpadding="5" cellspacing="0">
+  <tr>
+    <th>Method</th>
+    <th>Accuracy</th>
+  </tr>
+  <tr>
+    <td>Logistic Regression (raw features)</td>
+    <td>0.5750</td>
+  </tr>
+  <tr>
+    <td>DeepWalk + Logistic Regression</td>
+    <td>0.6930</td>
+  </tr>
+</table>
+
+<h3>2) GraphSAGE Models</h3>
+<table border="1" cellpadding="5" cellspacing="0">
+  <tr>
+    <th>Model</th>
+    <th>Accuracy</th>
+  </tr>
+  <tr>
+    <td>GraphSAGE (full-batch)</td>
+    <td>0.8050</td>
+  </tr>
+  <tr>
+    <td>GraphSAGE (best observed)</td>
+    <td>0.7970</td>
+  </tr>
+</table>
+
+<h3>3) Training Set Size Variation</h3>
+<table border="1" cellpadding="5" cellspacing="0">
+  <tr>
+    <th>Training Data</th>
+    <th>Accuracy</th>
+  </tr>
+  <tr>
+    <td>5% training data (7 labels)</td>
+    <td>0.3830</td>
+  </tr>
+  <tr>
+    <td>10% training data (14 labels)</td>
+    <td>0.4950</td>
+  </tr>
+  <tr>
+    <td>20% training data (28 labels)</td>
+    <td>0.6370</td>
+  </tr>
+  <tr>
+    <td>40% training data (56 labels)</td>
+    <td>0.7330</td>
+  </tr>
+  <tr>
+    <td>100% training data (140 labels)</td>
+    <td>0.8000</td>
+  </tr>
+</table>
+
+<h3>4) Layer Architecture Experiments</h3>
+<table border="1" cellpadding="5" cellspacing="0">
+  <tr>
+    <th>Layers</th>
+    <th>Accuracy</th>
+  </tr>
+  <tr>
+    <td>1 layer</td>
+    <td>0.7220</td>
+  </tr>
+  <tr>
+    <td>2 layers</td>
+    <td>0.8080</td>
+  </tr>
+  <tr>
+    <td>3 layers</td>
+    <td>0.8020</td>
+  </tr>
+  <tr>
+    <td>4 layers</td>
+    <td>0.8090</td>
+  </tr>
+</table>
+
+<h3>5) Sampling Rate Experiments</h3>
+<table border="1" cellpadding="5" cellspacing="0">
+  <tr>
+    <th>Sampling</th>
+    <th>Accuracy</th>
+  </tr>
+  <tr>
+    <td>Fixed sampling [10, 10]</td>
+    <td>0.7970</td>
+  </tr>
+  <tr>
+    <td>Variable sampling [20, 5]</td>
+    <td>0.7930</td>
+  </tr>
+</table>
+
+<h3>Summary</h3>
+<p>
+The best performing model was GraphSAGE with 4 layers achieving 0.8090 accuracy, followed closely by the 2-layer configuration at 0.8080. Graph neural methods significantly outperformed traditional methods like Logistic Regression (0.5750) and DeepWalk embeddings (0.6930).
+</p>
+
 <h2>How to Run</h2>
 <pre>
 # Install requirements
