@@ -1,141 +1,59 @@
-<html lang="en">
-<body>
-  <header>
-    <h1>Social Network Analysis using GraphSAGE</h1>
-    <p><strong>Short description:</strong> A Social Network Analysis project using GraphSAGE on the Cora dataset for node classification and clustering. Compares GraphSAGE with DeepWalk and Logistic Regression, visualizing embeddings via PCA and evaluating model accuracy.</p>
-    <hr/>
-  </header>
+<h1 align="center">XenSense-V.1: A Survey and Proposed Framework for Video Segmentation and Object Detection in Autonomous Vehicles</h1>
 
-  <section id="features">
-    <h2>Features</h2>
-    <ul>
-      <li>GraphSAGE (full-batch) training for node classification on the Cora dataset.</li>
-      <li>DeepWalk embedding generation + Logistic Regression baseline.</li>
-      <li>Logistic Regression baseline directly on node features.</li>
-      <li>PCA visualization of embeddings (saved as PNGs).</li>
-      <li>Experiments:
-        <ul>
-          <li>Vary training-set size (show accuracy vs number of labeled samples).</li>
-          <li>Vary number of GraphSAGE layers (observe oversmoothing effect).</li>
-          <li>Compare fixed vs variable neighbor-sampling schedules (simple custom sampler).</li>
-        </ul>
-      </li>
-      <li>Terminal outputs for accuracy and saved figures for cluster visualizations.</li>
-    </ul>
-  </section>
+<p align="center">
+  <em>A Survey and Proposed Framework for Video Segmentation and Object Detection in Autonomous Vehicles</em><br>
+  Enhancing safety, perception, and real-world performance in next-generation self-driving systems.
+</p>
 
-  <section id="file-structure">
-    <h2>Repository structure</h2>
-    <pre>
-cora_graphsage_analysis/
-│
-├── data/
-│   └── cora/ (auto-downloaded)
-├── models/
-│   ├── graphsage_model.py
-│   ├── deepwalk_model.py
-│   └── logistic_regression.py
-├── utils/
-│   ├── data_loader.py
-│   ├── visualization.py
-│   └── metrics.py
-├── experiments/
-│   ├── sampling_experiments.py
-│   └── layer_experiments.py
-├── config.py
-├── main.py
-├── requirements.txt
-├── .gitignore
-└── figures/  (generated PCA plots will be saved here)
-    </pre>
-  </section>
+<hr>
 
-  <section id="requirements">
-    <h2>Requirements</h2>
-    <p>Install Python 3.8+ (3.10/3.11 recommended). Use a virtual environment. Key Python packages are listed in <code>requirements.txt</code>:</p>
-    <pre>
-torch
-torch-geometric (and required torch-scatter, torch-sparse, torch-cluster, torch-spline-conv)
-scikit-learn
-matplotlib
-numpy
-pandas
-networkx
-gensim
-tqdm
-  </section>
+<hr>
 
-  <section id="installation">
-    <h2>Installation</h2>
-    <ol>
-      <li>Open a terminal and navigate to the project root:
-        <pre>cd /path/to/cora_graphsage_analysis</pre>
-      </li>
-      <li>Create and activate a virtual environment (recommended):
-        <pre>
-# Windows (PowerShell)
-python -m venv .venv
-.venv\Scripts\Activate.ps1
+<h2>🖼Certificate</h2>
+<p align="center">
+  <img src="https://github.com/bhanu87777/Research-Work-XenSense-V.1/raw/main/img.png" alt="Project Image" width="600">
+</p>
 
-# Windows (cmd)
+<h2>📖 About the Project</h2>
+<p>
+  <strong>XenSense-V.1</strong> is part of our major project, focused on advancing research in autonomous vehicles. 
+  We conducted an extensive survey, collected datasets, and enhanced existing models for 
+  <strong>video segmentation</strong> and <strong>object detection</strong>. 
+</p>
+<p>
+  Our work has been <strong>accepted for oral presentation at ISBM 2025, Bangkok, Thailand</strong>, 
+  for the paper <em>“XenSense-V.1: A Survey and Proposed Framework for Video Segmentation and Object Detection in Autonomous Vehicles”</em>. 
+  It is also <strong>published in the Springer LNNS series</strong>, highlighting contributions to solving 
+  real-world challenges in autonomous driving.
+</p>
 
-python -m venv .venv
-.venv\Scripts\activate.bat
+<hr>
 
-# macOS / Linux
+<h2>📌 Current Status</h2>
+<p>
+  The <strong>codebase is still under active development</strong>.  
+  Core implementations for enhanced segmentation and detection frameworks are being finalized.  
+  Updates will be pushed regularly. 🔄
+</p>
 
-python3 -m venv .venv
-source .venv/bin/activate
-</pre>
-</li>
-</ol>
+<hr>
 
-  </section>
+<h2>🏆 Recognition</h2>
+<p>
+  ✅ Accepted for Oral Presentation at <strong>ISBM 2025</strong>, Bangkok, Thailand<br>
+  ✅ Published in <strong>Springer LNNS Series</strong><br>
+  ✅ Contribution to <strong>real-world autonomous vehicle challenges</strong>
+</p>
 
-  <section id="run">
-    <h2>How to run</h2>
-    <p>Run the main script from the project root. Example:</p>
-    <pre>python main.py</pre>
-    <p>What this does:</p>
-    <ul>
-      <li>Downloads the Cora dataset to <code>data/cora/</code> (if not present).</li>
-      <li>Runs baseline Logistic Regression on raw features, DeepWalk + Logistic Regression, and GraphSAGE training.</li>
-      <li>Saves PCA plots for each method into <code>figures/</code> (e.g., <code>figures/GraphSAGE_embeddings.png</code>).</li>
-      <li>Runs experiments for training-set size, number of GraphSAGE layers, and sampling-rate comparison; results are printed to the terminal.</li>
-    </ul>
-  </section>
+<hr>
 
-  <section id="expected-output">
-    <h2>Example terminal outputs & artifacts</h2>
-    <p>Terminal prints will include progress and final accuracies, for example:</p>
-    <pre>
-Logistic Regression Test Accuracy: 0.7000
-DeepWalk+Logistic Test Accuracy: 0.7400
-GraphSAGE Test accuracy (best observed): 0.8200
-Saved PCA plot to: figures/Logistic_on_raw_features.png
-Saved PCA plot to: figures/DeepWalk_embeddings.png
-Saved PCA plot to: figures/GraphSAGE_embeddings.png
-Training proportion 0.05 (20 labels) -> Test Acc: 0.60
-Training proportion 0.10 (40 labels) -> Test Acc: 0.68
-...
-Layers 1: Test Acc = 0.81
-Layers 2: Test Acc = 0.82
-Layers 3: Test Acc = 0.78
-...
-Sampling experiment results: {'fixed': ([10, 10], 0.80), 'variable': ([20, 5], 0.83)}
-    </pre>
-    <p>Generated figures are saved under <code>figures/</code>. Open them to inspect clustering by class (7 classes in Cora).</p>
-  </section>
+<h2>📌 Conclusion</h2>
+<p>
+  <strong>XenSense-V.1</strong> is a step forward in bridging the gap between academic research 
+  and real-world deployment of autonomous vehicle systems.  
+  By surveying, enhancing, and proposing a new framework, we aim to contribute towards safer and smarter self-driving technology. 🚘✨
+</p>
 
-  <section id="conclusion">
-    <h2>Conclusion</h2>
-    <p>This repository demonstrates a small but complete workflow for node classification and clustering using GraphSAGE and comparative baselines (DeepWalk and logistic regression). It provides:</p>
-    <ul>
-      <li>end-to-end training and evaluation,</li>
-      <li>visual inspection via PCA plots, and</li>
-      <li>experiments to analyze how labeled sample size, network depth (layers), and sampling strategy affect accuracy.</li>
-    </ul>
-    <p>Use this as a starting point for further experiments: add other GNN architectures (GCN, GAT), larger datasets, or more sophisticated sampling (NeighborLoader or mini-batch training).</p>
-  </section>
-</body>
-</html>
+<p align="center">
+  Made with ❤️ by our Research Team
+</p>
