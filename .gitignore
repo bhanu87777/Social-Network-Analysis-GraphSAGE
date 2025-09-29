@@ -27,9 +27,6 @@ data/
 *.db
 *.zip
 
-# Visualizations / figures
-figures/
-
 # OS files
 .DS_Store
 Thumbs.db
