@@ -1,16 +1,13 @@
-# main.py
-# main.py
 import torch
 import numpy as np
-from utils.data_loader import load_cora, set_seeds  # absolute import
-from models.graphsage_model import GraphSAGE, train_full_batch  # absolute import
-from models.deepwalk_model import deepwalk_embedding  # absolute import
-from models.logistic_regression import train_eval_logistic  # absolute import
-from utils.visualization import pca_and_plot  # absolute import
-from utils.metrics import evaluate_logits  # absolute import
+from utils.data_loader import load_cora, set_seeds 
+from models.graphsage_model import GraphSAGE, train_full_batch 
+from models.deepwalk_model import deepwalk_embedding 
+from models.logistic_regression import train_eval_logistic  
+from utils.visualization import pca_and_plot 
 from config import *
-from experiments.layer_experiments import layer_experiment  # absolute import
-from experiments.sampling_experiments import sampling_rate_experiment, train_with_sampling  # absolute import
+from experiments.layer_experiments import layer_experiment
+from experiments.sampling_experiments import sampling_rate_experiment
 
 
 def run_all():
@@ -25,7 +22,7 @@ def run_all():
     y = data.y.cpu().numpy()
     train_mask = data.train_mask.cpu().numpy()
     test_mask = data.test_mask.cpu().numpy()
-    acc_lr, report_lr, clf = train_eval_logistic(X, y, train_mask, test_mask, max_iter=LR_MAX_ITER)
+    acc_lr, report_lr = train_eval_logistic(X, y, train_mask, test_mask, max_iter=LR_MAX_ITER)
     print(f"Logistic Regression Test Accuracy: {acc_lr:.4f}")
     print(report_lr)
 
@@ -35,7 +32,7 @@ def run_all():
 
     print("\n=== 2) DeepWalk embeddings + Logistic Regression ===")
     emb = deepwalk_embedding(data.edge_index, num_nodes, dimensions=DEEPWALK_DIM, walks_per_node=DEEPWALK_WALKS_PER_NODE, walk_length=DEEPWALK_WALK_LENGTH, window=DEEPWALK_WINDOW, epochs=DEEPWALK_EPOCHS)
-    acc_dw, report_dw, clf_dw = train_eval_logistic(emb, y, train_mask, test_mask, max_iter=LR_MAX_ITER)
+    acc_dw, report_dw = train_eval_logistic(emb, y, train_mask, test_mask, max_iter=LR_MAX_ITER)
     print(f"DeepWalk+Logistic Test Accuracy: {acc_dw:.4f}")
     print(report_dw)
     file_dw = pca_and_plot(emb, y, title="DeepWalk_embeddings")

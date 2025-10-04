@@ -1,15 +1,9 @@
-# utils/visualization.py
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 import numpy as np
 import os
 
 def pca_and_plot(embeddings, labels, title, outpath="figures", show_legend=True):
-    """
-    embeddings: (N, D)
-    labels: (N,)
-    Saves a PNG to outpath/<title>.png
-    """
     if not os.path.exists(outpath):
         os.makedirs(outpath)
     pca = PCA(n_components=2)

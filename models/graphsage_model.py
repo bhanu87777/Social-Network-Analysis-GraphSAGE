@@ -1,11 +1,7 @@
-# models/graphsage_model.py
-# models/graphsage_model.py
 import torch
 import torch.nn.functional as F
 from torch import nn
 from torch_geometric.nn import SAGEConv
-from tqdm import trange
-# no relative imports required
 
 class GraphSAGE(nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers=2, dropout=0.5):
@@ -22,9 +18,6 @@ class GraphSAGE(nn.Module):
         self.dropout = dropout
 
     def forward(self, x, edge_index):
-        """
-        returns logits; internal penultimate activations can be obtained from `get_embeddings`
-        """
         for i, conv in enumerate(self.convs):
             x = conv(x, edge_index)
             if i != len(self.convs) - 1:
@@ -33,20 +26,12 @@ class GraphSAGE(nn.Module):
         return x  # logits
 
     def get_embeddings(self, x, edge_index):
-        """
-        Return embeddings from the penultimate layer if exists, else last layer.
-        We'll run the forward but capture either last hidden layer or the final outputs before softmax.
-        """
         out = x
         for i, conv in enumerate(self.convs):
             out = conv(out, edge_index)
             if i != len(self.convs) - 1:
                 out = F.relu(out)
-        # If more than one layer, penultimate is last hidden before final conv,
-        # but we captured final conv output. For visualization we often use the last hidden before logits.
-        # To keep consistent, if num_layers > 1, build embeddings using all but the last conv:
         if self.num_layers > 1:
-            # recompute hidden by running up to penultimate conv
             h = x
             for i, conv in enumerate(self.convs[:-1]):
                 h = conv(h, edge_index)
@@ -79,3 +64,50 @@ def train_full_batch(model, data, optimizer, epochs=200, device="cpu"):
         if epoch % 50 == 0 or epoch == epochs - 1:
             print(f"Epoch {epoch:03d} | Loss: {loss.item():.4f} | Train: {train_acc:.4f} | Val: {val_acc:.4f} | Test: {test_acc:.4f}")
     return best_acc
+
+
+# import torch
+# import torch.nn.functional as F
+# from torch import nn
+# from torch_geometric.nn import SAGEConv
+
+# class GraphSAGE(nn.Module):
+#     def __init__(self, in_channels, hidden_channels, out_channels, num_layers=2, dropout=0.5):
+#         super().__init__()
+#         self.convs = nn.ModuleList()
+#         self.dropout = dropout
+#         if num_layers == 1:
+#             self.convs.append(SAGEConv(in_channels, out_channels))
+#         else:
+#             self.convs.append(SAGEConv(in_channels, hidden_channels))
+#             for _ in range(num_layers - 2):
+#                 self.convs.append(SAGEConv(hidden_channels, hidden_channels))
+#             self.convs.append(SAGEConv(hidden_channels, out_channels))
+
+#     def forward(self, x, edge_index):
+#         for i, conv in enumerate(self.convs):
+#             x = conv(x, edge_index)
+#             if i != len(self.convs)-1:
+#                 x = F.relu(x)
+#                 x = F.dropout(x, p=self.dropout, training=self.training)
+#         return x
+
+# def train_full_batch(model, data, optimizer, epochs=200, device="cpu"):
+#     model, data = model.to(device), data.to(device)
+#     loss_fn = nn.CrossEntropyLoss()
+#     best_test = 0.0
+#     for epoch in range(epochs):
+#         model.train()
+#         optimizer.zero_grad()
+#         logits = model(data.x, data.edge_index)
+#         loss_fn(logits[data.train_mask], data.y[data.train_mask]).backward()
+#         optimizer.step()
+
+#         model.eval()
+#         with torch.no_grad():
+#             pred = logits.argmax(1)
+#             test_acc = (pred[data.test_mask] == data.y[data.test_mask]).float().mean().item()
+#             best_test = max(best_test, test_acc)
+#         if epoch % 50 == 0 or epoch == epochs-1:
+#             print(f"Epoch {epoch} | Loss: {loss.item():.4f} | Test: {test_acc:.4f}")
+#     return best_test

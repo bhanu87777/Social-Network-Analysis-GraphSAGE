@@ -1,26 +1,16 @@
-# models/deepwalk_model.py
-# models/deepwalk_model.py
 import networkx as nx
 import numpy as np
 from gensim.models import Word2Vec
-from tqdm import tqdm
-import torch
-# no relative imports required
-
 
 def build_nx_from_edge_index(edge_index, num_nodes):
     G = nx.Graph()
     G.add_nodes_from(range(num_nodes))
     src = edge_index[0].cpu().numpy()
     dst = edge_index[1].cpu().numpy()
-    edges = list(zip(src.tolist(), dst.tolist()))
-    G.add_edges_from(edges)
+    G.add_edges_from(zip(src.tolist(), dst.tolist()))
     return G
 
 def generate_random_walks(G, num_walks=10, walk_length=40, seed=42):
-    """
-    Returns list of walks (each walk is list of node id strings for Word2Vec)
-    """
     np.random.seed(seed)
     nodes = list(G.nodes())
     walks = []
@@ -32,7 +22,7 @@ def generate_random_walks(G, num_walks=10, walk_length=40, seed=42):
             current = node
             for _ in range(walk_length - 1):
                 neighbors = list(G.neighbors(current))
-                if len(neighbors) == 0:
+                if not neighbors:
                     break
                 current = np.random.choice(neighbors)
                 walk.append(str(current))
@@ -46,8 +36,5 @@ def deepwalk_embedding(edge_index, num_nodes, dimensions=128, walks_per_node=10,
     emb = np.zeros((num_nodes, dimensions), dtype=np.float32)
     for n in range(num_nodes):
         key = str(n)
-        if key in w2v.wv:
-            emb[n] = w2v.wv[key]
-        else:
-            emb[n] = np.random.normal(size=(dimensions,))
+        emb[n] = w2v.wv[key] if key in w2v.wv else np.random.normal(size=(dimensions,))
     return emb

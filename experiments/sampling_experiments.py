@@ -1,13 +1,8 @@
-# experiments/sampling_experiments.py
-# experiments/sampling_experiments.py
 import torch
-import numpy as np
-from models.graphsage_model import GraphSAGE  # absolute import
-from utils.data_loader import load_cora, set_seeds  # absolute import
-from config import GRAPH_SAGE_HIDDEN, GRAPH_SAGE_LR, GRAPH_SAGE_WEIGHT_DECAY, GRAPH_SAGE_EPOCHS, DEVICE
-from tqdm import trange, tqdm
 import random
-
+from models.graphsage_model import GraphSAGE
+from utils.data_loader import load_cora, set_seeds
+from config import GRAPH_SAGE_WEIGHT_DECAY, DEVICE
 
 def build_adj_list(edge_index, num_nodes):
     src = edge_index[0].cpu().numpy()
@@ -18,16 +13,6 @@ def build_adj_list(edge_index, num_nodes):
     return adj
 
 def sample_subgraph(adj, seed_nodes, sizes):
-    """
-    adj: adjacency list (list of lists)
-    seed_nodes: iterable of original node ids (ints)
-    sizes: list of sample sizes per hop [s_1, s_2, ..., s_L]
-    Returns:
-        nodes_sorted: list of original node ids included in subgraph
-        node_id_map: dict old->new
-        edge_index_sub: torch.LongTensor [2, E]
-        seed_pos_mask: boolean mask (len(nodes_sorted)) marking which nodes are seed nodes
-    """
     nodes = set(seed_nodes)
     frontier = list(seed_nodes)
     all_nodes = set(nodes)
@@ -37,10 +22,7 @@ def sample_subgraph(adj, seed_nodes, sizes):
             neighs = adj[u]
             if len(neighs) == 0:
                 continue
-            if len(neighs) <= size:
-                sampled = neighs
-            else:
-                sampled = random.sample(neighs, size)
+            sampled = neighs if len(neighs) <= size else random.sample(neighs, size)
             for v in sampled:
                 if v not in all_nodes:
                     new_frontier.append(v)
@@ -48,28 +30,19 @@ def sample_subgraph(adj, seed_nodes, sizes):
         frontier = new_frontier
     nodes_sorted = sorted(list(all_nodes))
     node_id_map = {old: i for i, old in enumerate(nodes_sorted)}
-    # build edges among nodes_sorted
-    rows = []
-    cols = []
+    rows, cols = [], []
     for old_u in nodes_sorted:
         for old_v in adj[old_u]:
             if old_v in node_id_map:
                 rows.append(node_id_map[old_u])
                 cols.append(node_id_map[old_v])
-    if len(rows) == 0:
-        edge_index_sub = torch.empty((2,0), dtype=torch.long)
-    else:
-        edge_index_sub = torch.tensor([rows, cols], dtype=torch.long)
+    edge_index_sub = torch.tensor([rows, cols], dtype=torch.long) if len(rows) > 0 else torch.empty((2,0), dtype=torch.long)
     seed_pos = [node_id_map[s] for s in seed_nodes if s in node_id_map]
     seed_mask = torch.zeros(len(nodes_sorted), dtype=torch.bool)
     seed_mask[seed_pos] = True
     return nodes_sorted, node_id_map, edge_index_sub, seed_mask
 
 def train_with_sampling(data, num_layers=2, sample_sizes=[10,10], epochs=100, hidden=128, lr=0.01):
-    """
-    Simple GraphSAGE training using repeatedly sampled subgraphs created from training nodes.
-    After training we evaluate full-graph accuracy.
-    """
     set_seeds()
     num_nodes = data.num_nodes
     adj = build_adj_list(data.edge_index, num_nodes)
@@ -80,7 +53,6 @@ def train_with_sampling(data, num_layers=2, sample_sizes=[10,10], epochs=100, hi
 
     for epoch in range(epochs):
         model.train()
-        # sample a subgraph from training nodes (random subset of train nodes to form minibatch)
         batch_seed = random.sample(train_nodes, k=min(64, len(train_nodes)))
         nodes_sorted, node_id_map, edge_index_sub, seed_mask = sample_subgraph(adj, batch_seed, sample_sizes)
         if len(nodes_sorted) == 0:
@@ -90,12 +62,10 @@ def train_with_sampling(data, num_layers=2, sample_sizes=[10,10], epochs=100, hi
         edge_index_sub = edge_index_sub.to(DEVICE)
         opt.zero_grad()
         logits = model(x_sub, edge_index_sub)
-        # compute loss only on seed nodes (those that correspond to the original batch_seed)
         loss = loss_fn(logits[seed_mask], y_sub[seed_mask])
         loss.backward()
         opt.step()
         if epoch % 50 == 0:
-            # evaluate on full graph
             model.eval()
             with torch.no_grad():
                 logits_full = model(data.x.to(DEVICE), data.edge_index.to(DEVICE))
@@ -103,7 +73,6 @@ def train_with_sampling(data, num_layers=2, sample_sizes=[10,10], epochs=100, hi
                 test_acc = (preds[data.test_mask] == data.y[data.test_mask]).float().mean().item()
             print(f"Epoch {epoch:03d} | Loss: {loss.item():.4f} | Test Acc: {test_acc:.4f}")
 
-    # final evaluation
     model.eval()
     with torch.no_grad():
         logits_full = model(data.x.to(DEVICE), data.edge_index.to(DEVICE))
@@ -112,7 +81,6 @@ def train_with_sampling(data, num_layers=2, sample_sizes=[10,10], epochs=100, hi
     return model, test_acc
 
 def sampling_rate_experiment(data, fixed_size=[10,10], variable_size=[20,5], num_layers=2):
-    print("Running sampling-rate experiment")
     model_fix, acc_fix = train_with_sampling(data, num_layers=num_layers, sample_sizes=fixed_size, epochs=200)
     model_var, acc_var = train_with_sampling(data, num_layers=num_layers, sample_sizes=variable_size, epochs=200)
     print(f"Fixed sampling {fixed_size} -> Test Acc: {acc_fix:.4f}")

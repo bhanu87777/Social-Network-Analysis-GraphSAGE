@@ -1,10 +1,7 @@
-# experiments/layer_experiments.py
-# experiments/layer_experiments.py
 import torch
-from models.graphsage_model import GraphSAGE, train_full_batch  # absolute import
-from utils.data_loader import load_cora  # absolute import
-from config import GRAPH_SAGE_HIDDEN, GRAPH_SAGE_EMBED_DIM, GRAPH_SAGE_LR, GRAPH_SAGE_WEIGHT_DECAY, GRAPH_SAGE_EPOCHS, DEVICE
-
+from models.graphsage_model import GraphSAGE, train_full_batch
+from utils.data_loader import load_cora
+from config import GRAPH_SAGE_HIDDEN, GRAPH_SAGE_LR, GRAPH_SAGE_WEIGHT_DECAY, GRAPH_SAGE_EPOCHS, DEVICE
 
 def layer_experiment(layer_list=[1,2,3,4]):
     dataset, data = load_cora()
@@ -18,7 +15,6 @@ def layer_experiment(layer_list=[1,2,3,4]):
         best = train_full_batch(model, data, opt, epochs=GRAPH_SAGE_EPOCHS, device=DEVICE)
         results[L] = best
         print(f"Layers {L} -> Best test acc: {best:.4f}")
-    print("\nLayer experiment summary:")
     for L, acc in results.items():
         print(f"Layers {L}: Test Acc = {acc:.4f}")
     return results

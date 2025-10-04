@@ -1,10 +1,8 @@
-# utils/data_loader.py
 import torch
 from torch_geometric.datasets import Planetoid
-import os
 import random
 import numpy as np
-from config import SEED, DEVICE  # changed to absolute import
+from config import SEED, DEVICE
 
 def set_seeds(seed=SEED):
     random.seed(seed)

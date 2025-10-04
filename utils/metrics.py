@@ -1,5 +1,3 @@
-# utils/metrics.py
-import torch
 from sklearn.metrics import accuracy_score, classification_report
 
 def evaluate_logits(logits, labels, mask):
