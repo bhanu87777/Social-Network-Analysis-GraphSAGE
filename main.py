@@ -82,7 +82,7 @@ def run_all():
     _ = layer_experiment(layer_list=[1,2,3,4])
 
     print("\n=== 6) Sampling-rate experiment: fixed vs variable sample sizes ===")
-    sampling_results = sampling_rate_experiment(data, fixed_size=[10,10], variable_size=[20,5], num_layers=2)
+    sampling_results = sampling_rate_experiment(data, fixed_size=[10,10], variable_size=[10,15], num_layers=2)
     print("Sampling experiment results:", sampling_results)
 
 if __name__ == "__main__":

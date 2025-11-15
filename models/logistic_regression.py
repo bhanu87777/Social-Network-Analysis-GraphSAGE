@@ -12,4 +12,4 @@ def train_eval_logistic(features, labels, train_mask, test_mask, max_iter=1000, 
     preds = clf.predict(X_test)
     acc = accuracy_score(y_test, preds)
     report = classification_report(y_test, preds)
-    return acc, report, clf
+    return acc, report

@@ -80,7 +80,7 @@ def train_with_sampling(data, num_layers=2, sample_sizes=[10,10], epochs=100, hi
         test_acc = (preds[data.test_mask] == data.y[data.test_mask]).float().mean().item()
     return model, test_acc
 
-def sampling_rate_experiment(data, fixed_size=[10,10], variable_size=[20,5], num_layers=2):
+def sampling_rate_experiment(data, fixed_size=[10,10], variable_size=[10,15], num_layers=2):
     model_fix, acc_fix = train_with_sampling(data, num_layers=num_layers, sample_sizes=fixed_size, epochs=200)
     model_var, acc_var = train_with_sampling(data, num_layers=num_layers, sample_sizes=variable_size, epochs=200)
     print(f"Fixed sampling {fixed_size} -> Test Acc: {acc_fix:.4f}")
